@@ -1,31 +1,35 @@
-import { Application, Router } from "https://deno.land/x/oak@v11.1.0/mod.ts";
-import { oakCors } from "https://deno.land/x/cors@v1.2.2/mod.ts";
-import data from "./data.json" assert { type: "json" };
+// import { Application } from "https://deno.land/x/oak@v11.1.0/mod.ts";
+//
+// const app = new Application();
+//
+// app.use(ctx => {
+//   ctx.response.body = "Hello World!";
+// })
+// await app.listen({ port: 8000 });
 
-const router = new Router();
-router
-  .get("/", (context) => {
-    context.response.body = "Welcome to dinosaur API!";
-  })
-  .get("/api", (context) => {
-    context.response.body = data;
-  })
-  .get("/api/:dinosaur", (context) => {
-    if (context?.params?.dinosaur) {
-      const found = data.find((item) =>
-        item.name.toLowerCase() === context.params.dinosaur.toLowerCase()
-      );
-      if (found) {
-        context.response.body = found;
-      } else {
-        context.response.body = "No dinosaurs found.";
-      }
-    }
-  });
+import { createBot, startBot, GatewayIntents } from 'https://deno.land/x/discordeno@13.0.0/mod.ts';
+import { BOT_ID, BOT_TOKEN } from "./config.ts";
+import { logger } from "./src/utils/logger.ts";
+const log = logger({ name: "Main" });
+log.info("Starting Bot, this might take a while...");
+export const bot = createBot({
+  token: BOT_TOKEN,
+  botId: BOT_ID,
+  intents: [GatewayIntents.Guilds, GatewayIntents.GuildMessages],
+  events: {
+      ready() {
+          log.info("Bot is ready!");
+      },
+      messageCreate(message) {
+          if (message.content === "!ping") {
+              message.reply("Pong using Discordeno!");
+          }
+      },
+  }
+});
 
-const app = new Application();
-app.use(oakCors()); // Enable CORS for All Routes
-app.use(router.routes());
-app.use(router.allowedMethods());
-
-await app.listen({ port: 8000 });
+bot.gateway.presence = {
+  status: "online",
+  activities: []
+};
+await startBot(bot);
