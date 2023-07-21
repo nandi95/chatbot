@@ -1,61 +1,66 @@
-// deno-lint-ignore-file no-explicit-any
-import {bold, cyan, gray, italic, red, yellow} from '../../deps.ts';
+import { bold, cyan, gray, italic, red, yellow } from 'colors';
+import { DEBUG } from '../config';
 
+/* eslint-disable @typescript-eslint/naming-convention,@typescript-eslint/prefer-enum-initializers */
 export enum LogLevels {
     Debug,
     Info,
     Warn,
     Error,
-    Fatal,
+    Fatal
 }
+
+/* eslint-enable @typescript-eslint/naming-convention,@typescript-eslint/prefer-enum-initializers */
 
 const prefixes = new Map<LogLevels, string>([
     [LogLevels.Debug, 'DEBUG'],
     [LogLevels.Info, 'INFO'],
     [LogLevels.Warn, 'WARN'],
     [LogLevels.Error, 'ERROR'],
-    [LogLevels.Fatal, 'FATAL'],
+    [LogLevels.Fatal, 'FATAL']
 ]);
 const noColor: (str: string) => string = (msg) => msg;
+// eslint-disable-next-line @typescript-eslint/no-extra-parens
 const colorFunctions = new Map<LogLevels, (str: string) => string>([
     [LogLevels.Debug, gray],
     [LogLevels.Info, cyan],
     [LogLevels.Warn, yellow],
     [LogLevels.Error, (str: string) => red(str)],
-    [LogLevels.Fatal, (str: string) => red(bold(italic(str)))],
+    [LogLevels.Fatal, (str: string) => red(bold(italic(str)))]
 ]);
 
-export function logger({
-                           logLevel = LogLevels.Info,
-                           name,
-                       }: {
+function logger({
+    logLevel = LogLevels.Info,
+    name = 'Main'
+}: {
     logLevel?: LogLevels;
     name?: string;
 } = {}) {
-    function log(level: LogLevels, ...args: any[]) {
+    function log(level: LogLevels, ...args: unknown[]) {
         if (level < logLevel) return;
         let color = colorFunctions.get(level);
         if (!color) color = noColor;
         const date = new Date();
-        const log = [
+        const logValues: string[] = [
             `[${date.toLocaleDateString()} ${date.toLocaleTimeString()}]`,
-            color(prefixes.get(level) || 'DEBUG'),
+            color(prefixes.get(level) ?? 'DEBUG'),
             name ? `${name} >` : '>',
-            ...args,
+            // @ts-expect-error - js can handle the type juggling
+            ...args
         ];
         switch (level) {
             case LogLevels.Debug:
-                return console.debug(...log);
+                return console.debug(...logValues);
             case LogLevels.Info:
-                return console.info(...log);
+                return console.info(...logValues);
             case LogLevels.Warn:
-                return console.warn(...log);
+                return console.warn(...logValues);
             case LogLevels.Error:
-                return console.error(...log);
+                return console.error(...logValues);
             case LogLevels.Fatal:
-                return console.error(...log);
+                return console.error(...logValues);
             default:
-                return console.log(...log);
+                return console.log(...logValues);
         }
     }
 
@@ -63,23 +68,23 @@ export function logger({
         logLevel = level;
     }
 
-    function debug(...args: any[]) {
+    function debug(...args: unknown[]) {
         log(LogLevels.Debug, ...args);
     }
 
-    function info(...args: any[]) {
+    function info(...args: unknown[]) {
         log(LogLevels.Info, ...args);
     }
 
-    function warn(...args: any[]) {
+    function warn(...args: unknown[]) {
         log(LogLevels.Warn, ...args);
     }
 
-    function error(...args: any[]) {
+    function error(...args: unknown[]) {
         log(LogLevels.Error, ...args);
     }
 
-    function fatal(...args: any[]) {
+    function fatal(...args: unknown[]) {
         log(LogLevels.Fatal, ...args);
     }
 
@@ -90,8 +95,10 @@ export function logger({
         info,
         warn,
         error,
-        fatal,
+        fatal
     };
 }
 
-export const log = logger();
+export const log = logger({
+    logLevel: DEBUG ? LogLevels.Debug : LogLevels.Info
+});
