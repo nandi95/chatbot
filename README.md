@@ -1,14 +1,12 @@
-# REST API
+# Discord chatbot
 
-A template of REST API app using Oak framework
+A discord chatbot integrating with OpenAI's api
 
 
-Start the server with the command:
+Start the bot with the command:
 
 ```
-deno run --allow-net main.ts
+npm run start
 ```
 
-This starts the server at http://localhost:8000/
-
-Try go to http://localhost:8000/api/Brachiosaurus or http://localhost:8000/api/
+This will deploy the commands and bring the bot online

@@ -1,6 +1,6 @@
 import type { Message } from 'discord.js';
 import { log } from '../utils/logger';
-import ai, { getAiUsageInfo, systemMessage } from '../ai';
+import openAI, { getAiUsageInfo, systemMessage } from '../openAI';
 import { rateLimit } from '../utils/rateLimit';
 
 export default async function messageCreate(message: Message): Promise<void> {
@@ -59,13 +59,15 @@ export default async function messageCreate(message: Message): Promise<void> {
     // await thread.join();
     // await thread.sendTyping();
     log.info('Generating response...');
-    const completions = await ai.createChatCompletion({
+
+    const completions = await openAI.createChatCompletion({
         model: 'gpt-3.5-turbo',
         messages: [
             {
                 role: 'system',
-                content: systemMessage.content! + ' Youll also be given a history of the last messages that you can ' +
-                    'reference if they are relevant.'
+                content: systemMessage + ' Youll be given a question from the user to which you should reply' +
+                    ' to based on your best knowledge. Youll also be given a history of the last messages that you ' +
+                    'can reference if they are relevant.'
             },
             {
                 role: 'user',
@@ -77,7 +79,7 @@ export default async function messageCreate(message: Message): Promise<void> {
         await message.reply({ content: 'Something has gone wrong, I don\'t know what to say.' });
         return { data:
                 { choices: [], usage: undefined }
-        } as unknown as Awaited<ReturnType<typeof ai.createChatCompletion>>;
+        } as unknown as Awaited<ReturnType<typeof openAI.createChatCompletion>>;
     });
 
     if (!completions.data.choices[0]?.message?.content) {
@@ -87,7 +89,12 @@ export default async function messageCreate(message: Message): Promise<void> {
     }
 
     log.info('Sending response...');
-    await message.reply(completions.data.choices[0].message.content + getAiUsageInfo(completions));
+    await message.reply(
+        (completions.data.choices[0].message.content.length > 1950
+            ? completions.data.choices[0].message.content.substring(0, 1950) + '\n.\n.\n.'
+            : completions.data.choices[0].message.content)
+            + getAiUsageInfo(completions)
+    );
     // await thread.send({
     //     content: completions.data.choices[0].message.content + getAiUsageInfo(completions),
     //     reply: { messageReference: message, failIfNotExists: false }

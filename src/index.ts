@@ -29,7 +29,6 @@ void deployCommands().then(cmds => {
 client.once(Events.ClientReady, c => log.info(`Ready! Logged in as ${c.user.tag}`))
     .on(Events.MessageCreate, messageCreate)
     .on(Events.InteractionCreate, async interaction => {
-        console.log(interaction.type);
         if (!interaction.isCommand()) return;
 
         const command = commands.get(interaction.commandName);

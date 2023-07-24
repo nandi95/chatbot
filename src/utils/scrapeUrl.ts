@@ -9,7 +9,10 @@ export default async function scrapeUrl(url: string): Promise<string | null> {
     const htmlString = await fetch(url).then(async res => res.text());
     const document = new JSDOM(
         createDOMPurify(new JSDOM('').window).sanitize(htmlString),
-        { url, pretendToBeVisual: true }
+        {
+            url,
+            pretendToBeVisual: true
+        }
     );
 
     if (isProbablyReaderable(document.window.document)) {
