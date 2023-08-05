@@ -3,6 +3,8 @@ import type { Execute } from '../types';
 import { log } from '../utils/logger';
 import scrapeUrl from '../utils/scrapeUrl';
 import openAI, { getAiUsageInfo, systemMessage } from '../openAI';
+import type { YoutubeTranscriptError } from 'youtube-transcript';
+import { YoutubeTranscript } from 'youtube-transcript';
 
 export const data = new SlashCommandBuilder()
     .setName('summarise')
@@ -24,10 +26,22 @@ export const execute: Execute = async (interaction) => {
     const url = (interaction.options.data[0]!).value as string;
     const question = interaction.options.data[1]?.value as string | undefined;
 
-    const content = await scrapeUrl(url);
+    let content: string | null = null;
+
+    if (/^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.?be)\/.+$/i.test(url)) {
+        await YoutubeTranscript.fetchTranscript(url)
+            .then(resp => {
+                content = resp.reduce((acc, curr) => acc + ' ' + curr.text, '');
+            })
+            .catch((e: YoutubeTranscriptError) => {
+                content = e.message.replace('[YoutubeTranscript] \uD83D\uDEA8 ', '');
+            });
+    } else {
+        content = await scrapeUrl(url);
+    }
 
     if (!content) {
-        await interaction.editReply('There was an error fetching the page.');
+        await interaction.editReply('There was an error fetching the content of the given url.');
         return;
     }
 
@@ -40,7 +54,7 @@ export const execute: Execute = async (interaction) => {
                 content: systemMessage + (question
                     ? 'Youll be given some text and you should answer the following question based on the text. ' +
                         'Question: ' + question
-                    : ' Youll be given some text and you should summarise its text content as best you can.')
+                    : ' Youll be given some text and you should summarise its content as best you can.')
             },
             { role: 'user', content }
         ]

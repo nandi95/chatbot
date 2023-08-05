@@ -19,7 +19,8 @@
     "dotenv": "^16.3.1",
     "jsdom": "^22.1.0",
     "openai": "^3.3.0",
-    "ts-node": "^10.9.1"
+    "ts-node": "^10.9.1",
+    "youtube-transcript": "^1.0.6"
   },
   "devDependencies": {
     "@tsconfig/node20": "^20.1.0",
