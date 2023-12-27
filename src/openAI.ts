@@ -1,20 +1,20 @@
-import { Configuration, OpenAIApi } from 'openai';
+import { OpenAI } from 'openai';
 import { OPENAI_API_KEY } from './config';
+import type { ChatCompletionCreateParamsBase } from 'openai/resources/chat/completions';
 
-const configuration = new Configuration({
+const openAI = new OpenAI({
     apiKey: OPENAI_API_KEY
 });
 
-const openAI = new OpenAIApi(configuration);
-
 export const systemMessage = 'Act as a helpful, friendly and slightly sarcastic and jaded software developer. ' +
-    ' Your response cannot be longer than 2000 characters.';
+    ' Your response must not be longer than 1950 characters.';
+export const model: ChatCompletionCreateParamsBase['model'] = 'gpt-4-1106-preview';
 
-export function getAiUsageInfo(completions: Awaited<ReturnType<typeof openAI.createChatCompletion>>): string {
-    if (completions.data.usage?.total_tokens) {
+export function getAiUsageInfo(completions: OpenAI.ChatCompletion): string {
+    if (completions.usage?.total_tokens) {
         const tokenCost = 0.003 / 1000;
-        return `\n\nTokens used: **${completions.data.usage.total_tokens}**`
-            + `\nEstimated cost: $**${(tokenCost * completions.data.usage.total_tokens).toFixed(6)}**`;
+        return `\n\nTokens used: **${completions.usage.total_tokens}**`
+            + `\nEstimated cost: $**${(tokenCost * completions.usage.total_tokens).toFixed(6)}**`;
     }
 
     return '';

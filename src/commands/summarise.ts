@@ -2,7 +2,7 @@ import { SlashCommandBuilder } from 'discord.js';
 import type { Execute } from '../types';
 import { log } from '../utils/logger';
 import scrapeUrl from '../utils/scrapeUrl';
-import openAI, { getAiUsageInfo, systemMessage } from '../openAI';
+import openAI, { getAiUsageInfo, model, systemMessage } from '../openAI';
 import type { YoutubeTranscriptError } from 'youtube-transcript';
 import { YoutubeTranscript } from 'youtube-transcript';
 
@@ -46,8 +46,8 @@ export const execute: Execute = async (interaction) => {
     }
 
     log.info('Summarising...');
-    const completions = await openAI.createChatCompletion({
-        model: 'gpt-3.5-turbo',
+    const completions = await openAI.chat.completions.create({
+        model,
         messages: [
             {
                 role: 'system',
@@ -65,12 +65,12 @@ export const execute: Execute = async (interaction) => {
     });
 
 
-    if (!completions?.data.choices[0]?.message?.content) {
+    if (!completions?.choices[0]?.message?.content) {
         log.error('There was an error with the response.');
         await interaction.editReply({ content: 'Something has gone wrong, I don\'t know what to say.' });
         return;
     }
 
     log.info('Sending response...');
-    await interaction.editReply(completions.data.choices[0].message.content + getAiUsageInfo(completions));
+    await interaction.editReply(completions.choices[0].message.content + getAiUsageInfo(completions));
 };
