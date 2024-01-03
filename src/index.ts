@@ -6,7 +6,7 @@ import deployCommands from './deployCommands';
 import type { Command } from './types';
 import { rateLimit } from './utils/rateLimit';
 
-log.info('Starting Bot, this might take a while...');
+log.debug('Starting Bot, this might take a while...');
 
 const client = new Client({
     intents: [
@@ -18,12 +18,12 @@ const client = new Client({
     ]
 });
 
-log.info('Deploying commands...');
+log.debug('Deploying commands...');
 let commands = new Map<string, Command>();
 
 void deployCommands().then(cmds => {
     commands = cmds;
-    log.info('Deployed commands.');
+    log.debug('Deployed commands.');
 });
 
 client.once(Events.ClientReady, c => log.info(`Ready! Logged in as ${c.user.tag}`))
@@ -44,7 +44,7 @@ client.once(Events.ClientReady, c => log.info(`Ready! Logged in as ${c.user.tag}
         }
 
         if (rateLimit.get(interaction.user.id.toString()).value >= 10) {
-            log.info(`User ${interaction.user.tag} is sending too many requests.`);
+            log.debug(`User ${interaction.user.tag} is sending too many requests.`);
             await interaction.reply({ content: 'You are sending too many requests, please wait a bit.' });
             return;
         }

@@ -17,7 +17,7 @@ export default async function messageCreate(message: Message): Promise<void> {
         return;
     }
 
-    log.info('Message received.');
+    log.debug('Message received.');
 
     // if the last hit was over a minute ago, reset the counter
     if (rateLimit.get(message.author.id.toString()).lastHit < Date.now() - 60000) {
@@ -25,14 +25,14 @@ export default async function messageCreate(message: Message): Promise<void> {
     }
 
     if (rateLimit.get(message.author.id.toString()).value >= 10) {
-        log.info(`User ${message.author.tag} is sending too many requests.`);
+        log.debug(`User ${message.author.tag} is sending too many requests.`);
         await message.reply({ content: 'You are sending too many requests, please wait a bit.' });
         return;
     }
 
     rateLimit.hit(message.author.id.toString());
 
-    log.info(`Bot was mentioned by ${message.author.tag} in ${message.guild.name}#${String(message.channel)}`);
+    log.debug(`Bot was mentioned by ${message.author.tag} in ${message.guild.name}#${String(message.channel)}`);
 
     if (message.hasThread) {
         await message.thread!.join();
@@ -41,13 +41,13 @@ export default async function messageCreate(message: Message): Promise<void> {
         await message.channel.sendTyping();
     }
 
-    log.info('Fetching context...');
+    log.debug('Fetching context...');
 
     const messages = message.hasThread
         ? await message.thread!.messages.fetch({ limit: 50, before: message.id })
         : await message.channel.messages.fetch({ limit: 50, before: message.id });
 
-    log.info('Generating response...');
+    log.debug('Generating response...');
 
     const completions = await openAI.chat.completions.create({
         model,
@@ -61,7 +61,8 @@ export default async function messageCreate(message: Message): Promise<void> {
             ...messages.map(m => ({
                 role: m.author.tag === 'chat-bot' ? 'assistant' : 'user' as 'assistant' | 'user',
                 content: m.content,
-                name: m.author.tag
+                // replace # with _
+                name: m.author.tag.replaceAll('#', '_')
             })),
             {
                 role: 'user',
@@ -69,10 +70,7 @@ export default async function messageCreate(message: Message): Promise<void> {
                 name: message.author.tag
             }
         ]
-    }).catch(async () => {
-        log.error('There was an error while generating a response.');
-        await message.reply({ content: 'Something has gone wrong, I don\'t know what to say.' });
-    });
+    }).catch(() => undefined);
 
     if (!completions?.choices[0]?.message.content) {
         log.error('There was an error with the response.');
@@ -80,7 +78,7 @@ export default async function messageCreate(message: Message): Promise<void> {
         return;
     }
 
-    log.info('Sending response...');
+    log.debug('Sending response...');
 
     const content = (completions.choices[0].message.content.length > 1950
         ? completions.choices[0].message.content.substring(0, 1950) + '\n.\n.\n.'

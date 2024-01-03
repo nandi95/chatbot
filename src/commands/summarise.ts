@@ -45,7 +45,7 @@ export const execute: Execute = async (interaction) => {
         return;
     }
 
-    log.info('Summarising...');
+    log.debug('Summarising...');
     const completions = await openAI.chat.completions.create({
         model,
         messages: [
@@ -71,6 +71,6 @@ export const execute: Execute = async (interaction) => {
         return;
     }
 
-    log.info('Sending response...');
+    log.debug('Sending response...');
     await interaction.editReply(completions.choices[0].message.content + getAiUsageInfo(completions));
 };

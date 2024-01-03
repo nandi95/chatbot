@@ -27,13 +27,13 @@ export default async function deployCommands(): Promise<Map<string, Command>> {
     }
 
     await Promise.all(imports);
-    log.info(`Found ${commands.size} command${commands.size > 1 ? 's' : ''}.`);
+    log.debug(`Found ${commands.size} command${commands.size > 1 ? 's' : ''}.`);
 
     const rest = new REST().setToken(BOT_TOKEN);
 
     try {
         const body = [...commands.values()].map(command => command.data.toJSON());
-        log.info(`Started refreshing ${body.length} application (/) command${body.length > 1 ? 's' : ''}.`);
+        log.debug(`Started refreshing ${body.length} application (/) command${body.length > 1 ? 's' : ''}.`);
 
         // The put method is used to fully refresh all commands in the guild with the current set
         const appCommands = (await rest.put(
@@ -43,7 +43,7 @@ export default async function deployCommands(): Promise<Map<string, Command>> {
 
         // todo - delete commands that are no longer in the codebase
 
-        log.info(
+        log.debug(
             `Successfully reloaded ${appCommands.length} application (/) command${appCommands.length > 1 ? 's' : ''}.`
         );
     } catch (error) {
