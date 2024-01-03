@@ -17,7 +17,7 @@
         "allowUnreachableCode": false
     },
     "include": [
-        "src/**/*.ts",
+        "src/index.ts",
     ],
     "exclude": [
         "**/node_modules/",

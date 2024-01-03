@@ -5,7 +5,8 @@
   "main": "index.js",
   "type": "commonjs",
   "scripts": {
-    "start": "tsc --project src/commands/tsconfig.json && ts-node src/index.ts",
+    "build": "tsc",
+    "start": "node ./src/index.js",
     "lint": "eslint . --cache --fix --ext .ts"
   },
   "keywords": [],
