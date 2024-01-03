@@ -50,6 +50,8 @@ function logger({
         ];
         switch (level) {
             case LogLevels.Debug:
+                if (!DEBUG) return;
+
                 return console.debug(...logValues);
             case LogLevels.Info:
                 return console.info(...logValues);
