@@ -38,7 +38,7 @@ client.once(Events.ClientReady, c => log.info(`Ready! Logged in as ${c.user.tag}
             return;
         }
 
-        // if last hit was over a minute ago, reset the counter
+        // if the last hit was over a minute ago, reset the counter
         if (rateLimit.get(interaction.user.id.toString()).lastHit < Date.now() - 60000) {
             rateLimit.reset(interaction.user.id.toString());
         }
