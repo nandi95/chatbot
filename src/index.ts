@@ -66,6 +66,13 @@ client.once(Events.ClientReady, c => log.info(`Ready! Logged in as ${c.user.tag}
 
 void client.login(BOT_TOKEN);
 
+setInterval(
+    () => log.debug(`Cleared ${rateLimit.clearOld()} old rate limits.`),
+    // every 24 hours
+    1000 * 60 * 60 * 24
+);
+
 ['SIGINT', 'SIGTERM', 'SIGQUIT'].forEach(signal => process.on(signal, () => {
-    client.destroy();
+    log.debug('Shutting down...');
+    void client.destroy();
 }));
