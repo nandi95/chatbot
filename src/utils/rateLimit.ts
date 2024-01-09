@@ -7,7 +7,7 @@ export const rateLimit = {
     },
     get: (userId: string): { value: number; lastHit: number } => userRequests.get(userId) ?? { value: 0, lastHit: 0 },
     reset: (userId: string): boolean => userRequests.delete(userId),
-    // old user hits should be cleared at an interval
+    // todo - old user hits should be cleared at an interval
     clearOld: (): void => {
         for (const [userId, { lastHit }] of userRequests.entries()) {
             // older than 24 hours
