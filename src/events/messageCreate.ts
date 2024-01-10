@@ -1,4 +1,5 @@
 import type { Message } from 'discord.js';
+import { Collection } from 'discord.js';
 import { log } from '../utils/logger';
 import openAI, { getAiUsageInfo, model, systemMessage } from '../openAI';
 import { rateLimit } from '../utils/rateLimit';
@@ -43,9 +44,11 @@ export default async function messageCreate(message: Message): Promise<void> {
 
     log.debug('Fetching context...');
 
-    const messages = message.hasThread
-        ? await message.thread!.messages.fetch({ limit: 50, before: message.id })
-        : await message.channel.messages.fetch({ limit: 50, before: message.id });
+    const messages = message.content.includes('--no-logs')
+        ? new Collection<string, Message>
+        : message.hasThread
+            ? await message.thread!.messages.fetch({ limit: 50, before: message.id })
+            : await message.channel.messages.fetch({ limit: 50, before: message.id });
 
     log.debug('Generating response...');
 
