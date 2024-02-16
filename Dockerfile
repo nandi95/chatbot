@@ -13,4 +13,9 @@ RUN npm install
 # Transpile TypeScript files
 RUN npm run build
 
+# uninstall dev dependencies
+RUN npm prune --production
+# Remove all TypeScript files
+RUN find . -type f -name "*.ts" -delete
+
 CMD ["npm", "start"]
