@@ -27,7 +27,7 @@ export default async function deployCommands(): Promise<Map<string, Command>> {
     }
 
     await Promise.all(imports);
-    log.debug(`Found ${commands.size} command${commands.size > 1 ? 's' : ''}.`);
+    log.debug(`Found ${commands.size ?? 'No'} commands.`);
 
     const rest = new REST().setToken(BOT_TOKEN);
 
