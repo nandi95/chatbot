@@ -5,3 +5,5 @@ README.md
 .eslintcache
 .eslintrc.js
 .env.example
+.idea
+.github
