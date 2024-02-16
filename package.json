@@ -20,7 +20,6 @@
     "dotenv": "^16.3.1",
     "jsdom": "^23.0.1",
     "openai": "^4.24.1",
-    "ts-node": "^10.9.1",
     "youtube-transcript": "^1.0.6"
   },
   "devDependencies": {
@@ -31,6 +30,7 @@
     "@typescript-eslint/parser": "^5.38.0",
     "eslint": "^8.23.1",
     "eslint-plugin-import": "^2.22.1",
+    "ts-node": "^10.9.2",
     "tslib": "^2.2.0",
     "typescript": "^5.0.2"
   }
