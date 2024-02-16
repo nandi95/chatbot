@@ -74,5 +74,10 @@ setInterval(
 
 ['SIGINT', 'SIGTERM', 'SIGQUIT'].forEach(signal => process.on(signal, () => {
     log.debug('Shutting down...');
-    void client.destroy();
+    void client.destroy()
+        .then(() => log.debug('Logged out.'))
+        .finally(() => process.exit(0));
+
+    // force quit after 5 seconds
+    setTimeout(() => process.exit(1), 5000);
 }));
