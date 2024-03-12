@@ -3,6 +3,7 @@ import { Collection } from 'discord.js';
 import { log } from '../utils/logger';
 import openAI, { getAiUsageInfo, model, systemMessage } from '../openAI';
 import { rateLimit } from '../utils/rateLimit';
+import capResponse from "../utils/capResponse";
 
 export default async function messageCreate(message: Message): Promise<void> {
     if (
@@ -83,10 +84,7 @@ export default async function messageCreate(message: Message): Promise<void> {
 
     log.debug('Sending response...');
 
-    const content = (completions.choices[0].message.content.length > 1950
-        ? completions.choices[0].message.content.substring(0, 1950) + '\n.\n.\n.'
-        : completions.choices[0].message.content)
-        + getAiUsageInfo(completions);
+    const content = capResponse(completions)! + getAiUsageInfo(completions);
 
     if (message.hasThread) {
         await message.thread!.send({

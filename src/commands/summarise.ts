@@ -5,6 +5,7 @@ import scrapeUrl from '../utils/scrapeUrl';
 import openAI, { getAiUsageInfo, model, systemMessage } from '../openAI';
 import type { YoutubeTranscriptError } from 'youtube-transcript';
 import { YoutubeTranscript } from 'youtube-transcript';
+import capResponse from "../utils/capResponse";
 
 export const data = new SlashCommandBuilder()
     .setName('summarise')
@@ -72,5 +73,5 @@ export const execute: Execute = async (interaction) => {
     }
 
     log.debug('Sending response...');
-    await interaction.editReply(completions.choices[0].message.content + getAiUsageInfo(completions));
+    await interaction.editReply(capResponse(completions)! + getAiUsageInfo(completions));
 };
