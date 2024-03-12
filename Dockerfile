@@ -14,10 +14,12 @@ RUN npm install
 RUN npm run build
 
 # uninstall dev dependencies
-RUN npm prune --production
+RUN npm prune --omit=dev
+
 # Remove all TypeScript files
 RUN find ./src -name "*.ts" -type f -delete
 
+# Remove unnecessary files
 RUN rm tsconfig.json package-lock.json
 
 CMD ["npm", "start"]
