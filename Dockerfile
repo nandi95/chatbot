@@ -17,7 +17,7 @@ RUN npm run build
 RUN npm prune --production
 # Remove all TypeScript files
 RUN find . -type f -name "*.ts" -delete
-RUN rm tsconfig.json
-RUN rm package-lock.json
+
+RUN rm tsconfig.json package-lock.json
 
 CMD ["npm", "start"]
