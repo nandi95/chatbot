@@ -1,5 +1,5 @@
 import { bold, cyan, gray, italic, red, yellow } from 'colors';
-import { DEBUG } from '../config';
+import { DEBUG, TZ as timeZone } from '../config';
 
 /* eslint-disable @typescript-eslint/naming-convention,@typescript-eslint/prefer-enum-initializers */
 export enum LogLevels {
@@ -42,7 +42,8 @@ function logger({
         if (!color) color = noColor;
         const date = new Date();
         const logValues: string[] = [
-            `[${date.toLocaleDateString()} ${date.toLocaleTimeString()}]`,
+            `[${date.toLocaleDateString('en-GB', { timeZone })}` +
+            ` ${date.toLocaleTimeString('en-GB', { timeZone })}]`,
             color(prefixes.get(level) ?? 'DEBUG'),
             name ? `${name} >` : '>',
             // @ts-expect-error - js can handle the type juggling
