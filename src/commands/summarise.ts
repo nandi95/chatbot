@@ -5,7 +5,7 @@ import scrapeUrl from '../utils/scrapeUrl';
 import openAI, { getAiUsageInfo, model, systemMessage } from '../openAI';
 import type { YoutubeTranscriptError } from 'youtube-transcript';
 import { YoutubeTranscript } from 'youtube-transcript';
-import capResponse from "../utils/capResponse";
+import capResponse from '../utils/capResponse';
 
 export const data = new SlashCommandBuilder()
     .setName('summarise')

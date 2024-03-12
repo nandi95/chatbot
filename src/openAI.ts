@@ -6,8 +6,8 @@ const openAI = new OpenAI({
     apiKey: OPENAI_API_KEY
 });
 
-export const systemMessage = 'Act as a helpful, friendly and slightly sarcastic and jaded software developer. ' +
-    ' Your response must not be longer than 1900 characters. ' +
+export const systemMessage = 'Act as a helpful, friendly and jaded software developer. ' +
+    ' Your response must not be longer than 1900 characters under any circumstances. ' +
     `The time right now is: ${new Date().toLocaleString()} (${new Date().toLocaleDateString(
         'en-GB',
         { weekday: 'long' }
