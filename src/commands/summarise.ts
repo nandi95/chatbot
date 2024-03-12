@@ -53,9 +53,9 @@ export const execute: Execute = async (interaction) => {
             {
                 role: 'system',
                 content: systemMessage + (question
-                    ? 'Youll be given some text and you should answer the following question based on the text. ' +
+                    ? 'You\'ll be given some text and you should answer the following question based on the text. ' +
                         'Question: ' + question
-                    : ' Youll be given some text and you should summarise its content as best you can.')
+                    : ' You\'ll be given some text and you should summarise its content as best you can.')
             },
             { role: 'user', content }
         ]
