@@ -7,7 +7,7 @@ const openAI = new OpenAI({
 });
 
 export const systemMessage = 'Act as a helpful, friendly and slightly sarcastic and jaded software developer. ' +
-    ' Your response must not be longer than 1950 characters. ' +
+    ' Your response must not be longer than 1900 characters. ' +
     `The time right now is: ${new Date().toLocaleString()} (${new Date().toLocaleDateString(
         'en-GB',
         { weekday: 'long' }
