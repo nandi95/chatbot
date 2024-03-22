@@ -18,7 +18,8 @@ export function getAiUsageInfo(completions: OpenAI.ChatCompletion): string {
     if (completions.usage?.total_tokens) {
         const tokenCost = 0.003 / 1000;
         return `\n\nTokens used: **${completions.usage.total_tokens}**`
-            + `\nEstimated cost: $**${(tokenCost * completions.usage.total_tokens).toFixed(6)}**`;
+            + `\nEstimated cost: $**${(tokenCost * completions.usage.total_tokens).toFixed(6)}**`
+            + `\nModel used: *${completions.model}*`;
     }
 
     return '';
