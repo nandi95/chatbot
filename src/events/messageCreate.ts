@@ -73,7 +73,8 @@ export default async function messageCreate(message: Message): Promise<void> {
                 content: message.content,
                 name: message.author.tag
             }
-        ]
+        ],
+        user: message.author.id
     }).catch(() => undefined);
 
     if (!completions?.choices[0]?.message.content) {

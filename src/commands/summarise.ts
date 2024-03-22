@@ -58,7 +58,8 @@ export const execute: Execute = async (interaction) => {
                     : ' You\'ll be given some text and you should summarise its content as best you can.')
             },
             { role: 'user', content }
-        ]
+        ],
+        user: interaction.user.id
     }).catch(async (e: Error) => {
         log.error('There was an error while summarising. ' + e.message);
         await interaction.editReply({ content: 'Something has gone wrong, I don\'t know what to say.' });
